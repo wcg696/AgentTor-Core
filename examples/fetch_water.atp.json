@@ -1,0 +1,8 @@
+{
+  "task_id": "FETCH_WATER_001",
+  "workflow": [
+    { "step": 1, "module": "Vision", "action": "OBJECT_SCAN", "params": { "target": "cup" } },
+    { "step": 2, "module": "Logic", "action": "PATH_PLANNING", "params": { "avoid_collision": true } },
+    { "step": 3, "module": "Hardware", "action": "GRASP_OBJECT", "params": { "force": "2.8N" } }
+  ]
+}
