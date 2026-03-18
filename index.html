@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AgentTor Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-black text-green-400 font-mono">
+
+<div class="grid grid-cols-3 gap-4 p-4 h-screen">
+
+    <!-- 左：视觉 -->
+    <div class="border border-green-500 p-2">
+        <h2 class="text-green-300">Perception View</h2>
+        <div class="bg-gray-800 h-full flex items-center justify-center">
+            <span>Camera Feed (Simulated)</span>
+        </div>
+    </div>
+
+    <!-- 中：控制台 -->
+    <div class="border border-green-500 p-2 flex flex-col">
+        <h2 class="text-green-300">AgentTor Core</h2>
+
+        <div id="terminal" class="flex-1 overflow-auto text-sm"></div>
+
+        <input id="input"
+            class="bg-black border border-green-500 mt-2 p-1"
+            placeholder="Enter command (water / tv / door)"
+        />
+    </div>
+
+    <!-- 右：执行 -->
+    <div class="border border-green-500 p-2">
+        <h2 class="text-green-300">Execution Monitor</h2>
+        <div id="actions" class="text-sm"></div>
+    </div>
+
+</div>
+
+<script>
+const ATP = {
+    WATER: {
+        task_id: "FETCH_WATER",
+        workflow: [
+            {step:1, action:"SCAN_CUP"},
+            {step:2, action:"MOVE_ARM"},
+            {step:3, action:"GRAB"}
+        ]
+    },
+    TV: {
+        task_id: "TURN_ON_TV",
+        workflow: [
+            {step:1, action:"SCAN_REMOTE"},
+            {step:2, action:"AIM"},
+            {step:3, action:"PRESS"}
+        ]
+    },
+    DOOR: {
+        task_id: "OPEN_DOOR",
+        workflow: [
+            {step:1, action:"SCAN_HANDLE"},
+            {step:2, action:"GRAB"},
+            {step:3, action:"PULL"}
+        ]
+    }
+};
+
+const input = document.getElementById("input");
+const terminal = document.getElementById("terminal");
+const actions = document.getElementById("actions");
+
+input.addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+        run(this.value.toUpperCase());
+        this.value="";
+    }
+});
+
+function run(cmd){
+    let key="WATER";
+    if(cmd.includes("TV")) key="TV";
+    if(cmd.includes("DOOR")) key="DOOR";
+
+    let data = ATP[key];
+
+    terminal.innerHTML += `<div>> ${cmd}</div>`;
+    terminal.innerHTML += `<div class="text-blue-400">Intent: ${key}</div>`;
+
+    terminal.innerHTML += `<pre>${JSON.stringify(data,null,2)}</pre>`;
+
+    actions.innerHTML="";
+
+    data.workflow.forEach((s,i)=>{
+        setTimeout(()=>{
+            let el=document.createElement("div");
+
+            if(Math.random()>0.7){
+                el.innerHTML=`⚠ STEP ${s.step}: RETRY...`;
+                el.className="text-yellow-400";
+                actions.appendChild(el);
+
+                setTimeout(()=>{
+                    el.innerHTML=`✓ STEP ${s.step}: ${s.action}`;
+                    el.className="text-green-400";
+                },1000);
+
+            }else{
+                el.innerHTML=`✓ STEP ${s.step}: ${s.action}`;
+                actions.appendChild(el);
+            }
+
+        }, i*1000);
+    });
+}
+</script>
+
+</body>
+</html>
