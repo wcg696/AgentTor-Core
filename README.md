@@ -2,10 +2,9 @@
 
 AgentTor-Core is a reference runtime for executing UEL (Universal Execution Language) programs on ROS2-based robotic systems.
 
-## 🔗 Related Standard
-UEL Spec:  
-https://github.com/wcg696/uel-spec  
-*(This repo is the **implementation**, not the standard itself. The protocol definition lives in the uel-spec repo.)*
+## Reference Runtime
+- AgentTor-Core (ROS2 implementation)  
+  https://github.com/wcg696/AgentTor-Core
 
 ---
 
