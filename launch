@@ -1,0 +1,37 @@
+import os
+from launch import LaunchDescription
+from launch.actions import ExecuteProcess, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
+
+def generate_launch_description():
+    # 1. 启动官方 UR 仿真 (Gazebo + MoveIt2)
+    # 注意：确保你已经安装了 ur_simulation_gz
+    ur_sim_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            os.path.join(get_package_share_directory('ur_simulation_gz'), 'launch', 'ur_sim_moveit.launch.py')
+        ]),
+        launch_arguments={
+            'ur_type': 'ur5e',
+            'gripper_name': 'robotiq_2f_85',
+            'runtime_config_package': 'ur_simulation_gz'
+        }.items()
+    )
+
+    # 2. 启动 UEL Bridge (你的核心逻辑)
+    uel_bridge = ExecuteProcess(
+        cmd=['python3', 'src/uel_moveit_bridge.py'],
+        output='screen'
+    )
+
+    # 3. 启动 FastAPI 后端 (让网页能控制机器人)
+    fastapi_server = ExecuteProcess(
+        cmd=['uvicorn', 'src.main:app', '--host', '0.0.0.0', '--port', '8000'],
+        output='screen'
+    )
+
+    return LaunchDescription([
+        ur_sim_launch,
+        uel_bridge,
+        fastapi_server
+    ])
