@@ -62,3 +62,8 @@ uvicorn main:app --reload --port 8000
 
 # 启动 FastAPI backend
 uvicorn main:app --reload --port 8000
+## UEL Specification
+
+This project follows the UEL (Universal Execution Language) standard:
+
+https://github.com/wcg696/uel-spec
